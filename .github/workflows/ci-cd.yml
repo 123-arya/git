@@ -49,4 +49,15 @@ jobs:
           docker tag task arya08/demo:latest
           docker push arya08/demo:latest
 
+      - name: Deploy to Ubuntu server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+            host: 172.28.141.141
+            username: aryaparab
+            key: id_rsa
+            script: |
+              docker pull arya08/demo:latest
+              docker stop flask-app || true
+              docker rm flask-app || true
+              docker run -d -p 5000:5000 --name flask-app arya08/demo:latest
   
