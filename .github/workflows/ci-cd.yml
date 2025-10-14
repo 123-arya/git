@@ -50,7 +50,7 @@ jobs:
           docker push arya08/demo:latest
 
       - name: Deploy to Ubuntu server
-        uses: appleboy/ssh-action@v0.1.7
+        uses: ubuntu/ssh-action@v0.1.7
         with:
             host: 172.28.141.141
             username: aryaparab
