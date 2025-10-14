@@ -1,4 +1,4 @@
-name: Build and Test Flask App
+name: Build, Push & Deploy Flask App
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: self-hosted   # Uses your Ubuntu server runner
 
     steps:
-      # Step 1: Checkout your code
+      # Step 1: Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -26,7 +26,7 @@ jobs:
         run: |
           pip install -r requirements.txt || pip install flask
 
-      # Step 4: Run basic test
+      # Step 4: Run a simple test
       - name: Run simple test
         run: |
           python -c "from app import app; print('✅ Flask app import successful')"
@@ -35,77 +35,16 @@ jobs:
       - name: Build Docker image
         run: docker build -t task .
 
-      # Step 6: (Optional) Push to Docker Hub
+      # Step 6: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
-        if: github.ref == 'refs/heads/main'
         with:
           username: arya08
           password: AaZz@@1234
 
+      # Step 7: Push Docker image
       - name: Push image to Docker Hub
-        if: github.ref == 'refs/heads/main'
         run: |
           docker tag task arya08/demo:latest
           docker push arya08/demo:latest
 
-      - name: Deploy to Ubuntu server
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-            host: 172.28.141.141
-            username: aryaparab
-            key: -----BEGIN OPENSSH PRIVATE KEY-----
-                b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
-                NhAAAAAwEAAQAAAgEAmMODU5Szw6p4d0Y2hhIlY/3msnfqaytxBiAF5kztlno+mVTTvBGf
-                +BTEDZRAUfdfxf/fMkfi5WCtJ653mdETt+s6axPXYQuDfs8GuTwBXIB2fAPZUn6bp9cV6A
-                WfRXY/ngACD/YHc8P3sJIK/kyRQpCIecbaNrVqT4Nt2oVyAcw2DqDbeSO15Q0gEu9NciHR
-                RXOXmHoDweaQfXPF97novgnHWgGfmDChXMBz1q6mGJV4pBAjcDkZGjBfv2aTMSg+OQ/F9Y
-                +ld1VmT2hciXtL7FM9kwICBUvxPndSU1Aq6D9Eaa9ZBHLG7EW+eqlOQjuvbFGNbKZDDVuK
-                IUlVRbZfExE8U3ztqhRyImMLjieM96eEGgSl7DBmV8y8sDaVUj+F0PSX3oayDXnFjvmRgM
-                95C0tnW+LPBCcd+gKErSWUcEVhVe+O/h0Ub9SItzqsl0hDBhC+OKFN9AKvB74/8GJSodCG
-                RS3c+kacaeYQDtCwphxE0FH3r6hiTzZ6ue3bdXe4j093OYMOXGKIeWlEBNJLC84NGYE0oT
-                CLxHd/NZgfbHxfwOHzb9qyq6JU/nKFBkBsyariWp4xlUqyeKzP09pRcjDOR3C8P/t1LBK0
-                0G2aHl098Kb1PB9S7rqWVRTGKzslvZPpEJF1oQa/BoYqsAmc+GgBiyvYRJigVeD5eZdaN8
-                0AAAdAouih+6LoofsAAAAHc3NoLXJzYQAAAgEAmMODU5Szw6p4d0Y2hhIlY/3msnfqaytx
-                BiAF5kztlno+mVTTvBGf+BTEDZRAUfdfxf/fMkfi5WCtJ653mdETt+s6axPXYQuDfs8GuT
-                wBXIB2fAPZUn6bp9cV6AWfRXY/ngACD/YHc8P3sJIK/kyRQpCIecbaNrVqT4Nt2oVyAcw2
-                DqDbeSO15Q0gEu9NciHRRXOXmHoDweaQfXPF97novgnHWgGfmDChXMBz1q6mGJV4pBAjcD
-                kZGjBfv2aTMSg+OQ/F9Y+ld1VmT2hciXtL7FM9kwICBUvxPndSU1Aq6D9Eaa9ZBHLG7EW+
-                eqlOQjuvbFGNbKZDDVuKIUlVRbZfExE8U3ztqhRyImMLjieM96eEGgSl7DBmV8y8sDaVUj
-                +F0PSX3oayDXnFjvmRgM95C0tnW+LPBCcd+gKErSWUcEVhVe+O/h0Ub9SItzqsl0hDBhC+
-                OKFN9AKvB74/8GJSodCGRS3c+kacaeYQDtCwphxE0FH3r6hiTzZ6ue3bdXe4j093OYMOXG
-                KIeWlEBNJLC84NGYE0oTCLxHd/NZgfbHxfwOHzb9qyq6JU/nKFBkBsyariWp4xlUqyeKzP
-                09pRcjDOR3C8P/t1LBK00G2aHl098Kb1PB9S7rqWVRTGKzslvZPpEJF1oQa/BoYqsAmc+G
-                gBiyvYRJigVeD5eZdaN80AAAADAQABAAACABR2C38EadeJW71OEDuA7rUn6uB4o1NbbDYP
-                z/p6z0/aa8wJyppkGfMWhPP0qXDRG2jfzrtjWYaznj20ZpyZnnSB8z8oVy7OZfx0KkhhOy
-                Vyp2wQ7+jWwG6Ipox/REf/gKHfCmes4m6lDuX9ia9p/gLWbREyi0PMpMKlre8Y9J49BfiL
-                nxnoqJJXYbZniw4AbZFJ3EI2BY7RHQVQnnGB2ySpFqR9lyzBRruvo1Rb7C9axd/jsXt0im
-                IxnIF8cbah10O5UyCC7vy+2YdFSS+47gBnXdX07ORcuaFORh6WnEijQLyPGfM4lGBNLygq
-                ySqh5+swOSsWUeDWI/g1ZFCEDtO/8wiaartmOzS0ZfQncvEe7aulwMnSwSTxTouODJjWhO
-                c3SOAYAYl5XLkWC3skRTNJPpGUL0kIySOfTd7HJJlpM0dY1LCXHk2wpOEyYaA5fly58gNp
-                l5qnq29BFikj37WXbqeEalX3955jpQ/sRyQuZ1KxmbTfWXqiX8cK1mvDR0YMUtBeY32zNk
-                P/vCIXxz7Jum/tWbKa9mXGuEVnAaqoPtfFVrzdGmZ+nrwMgCaTWU/HX9SSBgk0JKNTSCkU
-                  1nKFOlR/faR6xYIr9NvFibCIW++oXZcrXQ6srg9w7w1ltm+Ra//N9ctGITB1vZbXOuLZPg
-                lOXzXFgVd5osSBMuoZAAABAF5j8+74Al5nMgMYW7gz+qUZdgkywVJO/gUf3ffmvd2l1URH  
-                NZvHvDQ3BaKsgwZ88t2r5iOUPYk1pXUa3RMnrulGZc+sBQwUO9eA3qrsRd160Um0L1UJoZ
-                O/S1OjB+wR9ktVl02unYM/wShlxFeyM9+OS75D18Wry1TkEXVOAsg/nY1nG44my8hRkpaO
-                DaVyuPrDrzkmiZOTw+jNp0IB1ziemCr3CmHCfxEN0CNK5qp2jQA/NQZaZrlfHC1cLZIo8t
-                  zqhkPtHzHkMLTuzOglv63fJmknHE9xR8UUJ4ieNaabjF9IOJREoSALBo0P5zSeF0dZD0SG
-                SWYMaJItNBguldQAAAEBAM5q4sAVkP3RWLVAXavv3MbnLPA4K3WkgfLnSXShClkh/y2Gqd
-                tbgkzNYiyv6fGBQdPK697+ge7QWC3SbnI9nF48Mt/9v8ErhIchzEM4JBbMw25yjGgbyE4Z
-                gu7DrjlDUyIXqxZEjE3Tw82XTLp8SSzJwGkMtN0/kZOSlXUkFnLjGUTId5OqVo+IHj7iIu
-                  u5GQYpDLiotThrgah/mXHujlgoaZbap0OmzA6VO/Cr9Gsf+E9geG+J0cCiYk7rTIwxFtFa
-                9wKo4nhZaDREfBfDIfPau+n1HQsXpDxPai2u0hGLTIGbsZwVUMxCiqYIuR5OZ6OfYps4Ns
-                    f81fJYPKGFFx8AAAEBAL11Uy58Wp7dIS6P2qRaTaBQF4A0mqen422XqmZ9928ANBzOYWGB
-                  i9lwQi8lkJMukc9IIU8XG56a2JZqyoppTSwCiF9qtLYd22jbk+eus5zTdiDYUcTNfXGQIC
-                4cILzWVjsNhFzzhrGi15QzXGHw7EJ+0kn2oaNYk+DHyaMxyIrXLBgSpxG/8cweprMoJKFL
-                    0nBdFv8148i8F0N6Ngne7V4Xfl4YxxQBccZXc1ISX9T0EY5hZYpUJP/jqD8cVmXDSOR4kl
-                  huly+kV0dIJk2hnTg0IpbvOE6cZ8gKQNlAz0DwcAaXS2uAW4vW/b5559jERLRCWpkgQQF8
-                GZjSozWo75MAAAAJY2ktY2Qta2V5AQI=
-                -----END OPENSSH PRIVATE KEY-----
-            script: |
-              docker pull arya08/demo:latest
-              docker stop flask-app || true
-              docker rm flask-app || true
-              docker run -d -p 5000:5000 --name flask-app arya08/demo:latest
-  
