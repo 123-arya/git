@@ -80,7 +80,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: practice
+        task-definition: practice-revision2.json
         container-name: demo
         image: latest
 
