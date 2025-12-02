@@ -79,11 +79,10 @@ jobs:
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
-      task-definition: practice-revision2.json
       with:
         task-definition: practice-revision2.json
         container-name: demo
-        image: latest
+        image: 922931547351.dkr.ecr.ap-south-1.amazonaws.com/demo:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
