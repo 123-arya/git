@@ -57,7 +57,7 @@ jobs:
       with:
         aws-access-key-id: AKIA5NYYBZTLZNEEOSEW
         aws-secret-access-key: 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
-        aws-region: ap-south-1b.amazonaws.com
+        aws-region: mumbai
         
     - name: Login to Amazon ECR
       id: login-ecr
