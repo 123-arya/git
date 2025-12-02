@@ -53,13 +53,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -68,7 +61,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG: sha256:1621cc68ccd6616c60727a8b78ccea22f3025fdfb4ff4ecf15d62444d72df656
       run: |
         # Build a docker container and
         # push it to ECR so that it can
@@ -81,14 +74,14 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+        task-definition: practice
+        container-name: demo
+        image: 922931547351.dkr.ecr.ap-south-1.amazonaws.com/demo:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
+        task-definition: arn:aws:ecs:ap-south-1:922931547351:task-definition/practice:2
+        service: arn:aws:ecs:ap-south-1:922931547351:service/warmhearted-hippopotamus-mgaxpv/demo1
+        cluster: arn:aws:ecs:ap-south-1:922931547351:cluster/warmhearted-hippopotamus-mgaxpv
         wait-for-service-stability: true
