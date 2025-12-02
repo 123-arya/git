@@ -35,7 +35,6 @@
         }
     ],
     "cpu": "1024",
-    "enableFaultInjection": false,
     "executionRoleArn": "arn:aws:iam::922931547351:role/ecsTaskExecutionRole",
     "family": "practice",
     "memory": "3072",
