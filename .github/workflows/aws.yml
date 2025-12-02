@@ -87,7 +87,7 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: arn:aws:ecs:ap-south-1:922931547351:task-definition/practice:2
-        service: arn:aws:ecs:ap-south-1:922931547351:service/warmhearted-hippopotamus-mgaxpv/demo1
-        cluster: arn:aws:ecs:ap-south-1:922931547351:cluster/warmhearted-hippopotamus-mgaxpv
+        task-definition: practice-revision2.json
+        service: demo1
+        cluster: warmhearted-hippopotamus-mgaxpv
         wait-for-service-stability: true
