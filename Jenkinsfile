@@ -8,7 +8,7 @@ pipeline {
     stages{
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t git .'
+                sh 'docker build -t arya08/git .'
             }
         }
         stage('Docker Login') {
