@@ -24,7 +24,7 @@ pipeline {
         }
          stage('Push Image') {
             steps {
-                sh 'docker push git'
+                sh 'docker push arya08/git'
             }
         }
     }
